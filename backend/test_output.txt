@@ -1,0 +1,12 @@
+Found 5 test(s).
+System check identified no issues (0 silenced).
+Creating test database for alias 'default'...
+
+...Failed reservation: past time 2026-03-08 19:00:00+00:00
+..
+----------------------------------------------------------------------
+Ran 5 tests in 0.041s
+
+OK
+Destroying test database for alias 'default'...
+
