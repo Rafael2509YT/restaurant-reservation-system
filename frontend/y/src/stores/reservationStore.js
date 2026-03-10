@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import api from '../api/apiClient'
+import availabilityApi from '../api/availabilityApi'
+import reservationApi from '../api/reservationApi'
 
 
 export const useReservationStore = defineStore('reservation', {
@@ -20,18 +21,16 @@ export const useReservationStore = defineStore('reservation', {
       this.noCapacity = false;
       this.noDate = false;
       try {
-        let url = `/availability/?date=${date}`;
-        if (partySize) url += `&party_size=${partySize}`;
-        const response = await api.get(url);
+        const response = await availabilityApi.getAvailability(date, partySize);
         this.availability = response.data;
 
         // Si vino vacío y había party_size, verificamos si el problema es capacidad o fecha
         if (this.availability.length === 0 && partySize) {
-          const fallback = await api.get(`/availability/?date=${date}`);
+          const fallback = await availabilityApi.getAvailability(date);
           if (fallback.data.length > 0) {
-            this.noCapacity = true;  // Hay mesas pero ninguna aguanta ese party_size
+            this.noCapacity = true;
           } else {
-            this.noDate = true;      // No hay disponibilidad para esa fecha en general
+            this.noDate = true;
           }
         } else if (this.availability.length === 0) {
           this.noDate = true;
@@ -46,11 +45,8 @@ export const useReservationStore = defineStore('reservation', {
       this.loading = true;
       this.error = null;
       try {
-        // Note: The instruction uses API_URL and axios directly.
-        // If you want to keep using the 'api' client, you'd adjust this.
-        // For now, I'm following the instruction's code snippet, but using 'api' client.
-        const response = await api.post('/reservations/', reservationData); // Changed from axios.post to api.post
-        return response.data; // Now returns the data containing unique_code
+        const response = await reservationApi.create(reservationData);
+        return response.data;
       } catch (err) {
         const msg = err.response?.data?.error;
         this.error = msg ? (typeof msg === 'string' ? msg : JSON.stringify(msg)) : "Failed to create reservation.";
@@ -64,12 +60,7 @@ export const useReservationStore = defineStore('reservation', {
       this.loading = true;
       this.error = null;
       try {
-        // Note: The instruction uses API_URL and axios directly.
-        // If you want to keep using the 'api' client, you'd adjust this.
-        // For now, I'm following the instruction's code snippet, but using 'api' client.
-        await api.delete(`/reservations/${id}/cancel/`, { // Changed from axios.delete to api.delete
-          data: { unique_code: uniqueCode }
-        });
+        await reservationApi.cancel(id, uniqueCode);
       } catch (err) {
         this.error = err.response?.data?.error || "Failed to cancel reservation.";
         throw err;
@@ -80,14 +71,7 @@ export const useReservationStore = defineStore('reservation', {
     async fetchAdminReservations(date, status) {
       this.loading = true; this.error = null;
       try {
-        let url = '/admin/reservations/';
-        const params = new URLSearchParams();
-        if (date) params.append('date', date);
-        if (status) params.append('status', status);
-        if (params.toString()) {
-            url += '?' + params.toString();
-        }
-        const response = await api.get(url);
+        const response = await reservationApi.fetchAll(date, status);
         this.adminReservations = response.data;
       } catch (err) {
         this.error = "Failed to load admin reservations.";
@@ -98,9 +82,7 @@ export const useReservationStore = defineStore('reservation', {
     async fetchMetrics(date) {
         this.loading = true; this.error = null;
         try {
-            let url = '/admin/metrics/';
-            if (date) url += `?date=${date}`;
-            const response = await api.get(url);
+            const response = await reservationApi.fetchMetrics(date);
             return response.data;
         } catch (err) {
             this.error = "Failed to load metrics.";
@@ -112,7 +94,7 @@ export const useReservationStore = defineStore('reservation', {
     async adminCancelReservation(id) {
         this.loading = true; this.error = null;
         try {
-            await api.delete(`/admin/reservations/${id}/cancel/`);
+            await reservationApi.adminCancel(id);
         } catch (err) {
             this.error = err.response?.data?.error || "Failed to cancel reservation.";
             throw err;
@@ -123,7 +105,7 @@ export const useReservationStore = defineStore('reservation', {
     async fetchTables() {
         this.loading = true; this.error = null;
         try {
-            const response = await api.get('/admin/tables/');
+            const response = await reservationApi.fetchTables();
             this.tables = response.data;
         } catch (err) {
             this.error = "Failed to load tables.";
@@ -134,7 +116,7 @@ export const useReservationStore = defineStore('reservation', {
     async createTable(data) {
         this.loading = true; this.error = null;
         try {
-            await api.post('/admin/tables/', data);
+            await reservationApi.createTable(data);
             await this.fetchTables();
         } catch (err) {
             this.error = err.response?.data?.error || "Failed to create table.";
@@ -146,7 +128,7 @@ export const useReservationStore = defineStore('reservation', {
     async deleteTable(id) {
         this.loading = true; this.error = null;
         try {
-            await api.delete(`/admin/tables/${id}/`);
+            await reservationApi.deleteTable(id);
             await this.fetchTables();
         } catch (err) {
             this.error = err.response?.data?.error || "Failed to delete table.";
@@ -158,7 +140,7 @@ export const useReservationStore = defineStore('reservation', {
     async fetchConfig() {
         this.loading = true; this.error = null;
         try {
-            const response = await api.get('/admin/config/');
+            const response = await reservationApi.fetchConfig();
             this.config = response.data;
         } catch (err) {
             this.error = "Failed to load config.";
@@ -169,7 +151,7 @@ export const useReservationStore = defineStore('reservation', {
     async updateConfig(data) {
         this.loading = true; this.error = null;
         try {
-            const response = await api.put('/admin/config/', data);
+            const response = await reservationApi.updateConfig(data);
             this.config = response.data;
         } catch (err) {
             this.error = err.response?.data?.error || "Failed to update config.";
@@ -184,7 +166,7 @@ export const useReservationStore = defineStore('reservation', {
     async updateTable(id, data) {
         this.loading = true; this.error = null;
         try {
-            const response = await api.put(`/admin/tables/${id}/`, data);
+            const response = await reservationApi.updateTable(id, data);
             // Update the table in the local list
             const index = this.tables.findIndex(t => t.id === id);
             if (index !== -1) {

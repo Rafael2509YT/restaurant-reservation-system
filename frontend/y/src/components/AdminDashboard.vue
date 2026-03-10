@@ -47,6 +47,7 @@
             <th>Fecha</th>
             <th>Hora</th>
             <th>Nombre</th>
+            <th>Email</th>
             <th>Invitados</th>
             <th>Mesa</th>
             <th>Estado</th>
@@ -58,6 +59,7 @@
             <td>{{ res.date }}</td>
             <td>{{ formatTime(res.time) }}</td>
             <td>{{ res.name }}<br><small>{{ res.phone }}</small></td>
+            <td>{{ res.email }}</td>
             <td>{{ res.guests }}</td>
             <td>{{ res.table_details?.number || '?' }}</td>
             <td class="status-cell">{{ res.status }}</td>
