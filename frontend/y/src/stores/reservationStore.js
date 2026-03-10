@@ -12,7 +12,9 @@ export const useReservationStore = defineStore('reservation', {
     noCapacity: false,
     noDate: false,
     loading: false,
-    error: null
+    error: null,
+    searchDate: null,
+    searchPartySize: null
   }),
   actions: {
     async fetchAvailability(date, partySize) {
@@ -21,6 +23,8 @@ export const useReservationStore = defineStore('reservation', {
       this.noCapacity = false;
       this.noDate = false;
       try {
+        this.searchDate = date;
+        this.searchPartySize = partySize;
         const response = await availabilityApi.getAvailability(date, partySize);
         this.availability = response.data;
 

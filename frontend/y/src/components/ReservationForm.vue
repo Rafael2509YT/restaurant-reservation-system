@@ -264,7 +264,17 @@ const submitReservation = async () => {
 };
 
 onMounted(async () => {
-    selectedDate.value = today.value;
+    // Initialize from store search context if available
+    if (store.searchDate) {
+      selectedDate.value = store.searchDate;
+    } else {
+      selectedDate.value = today.value;
+    }
+
+    if (store.searchPartySize) {
+      form.value.guests = store.searchPartySize;
+    }
+
     await store.fetchConfig();
     
     // Set initial time to opening time if available

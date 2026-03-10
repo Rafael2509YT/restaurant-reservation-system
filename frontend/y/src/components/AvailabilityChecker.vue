@@ -156,7 +156,16 @@ const getChairStyle = (index, total) => {
 };
 
 onMounted(() => {
-  date.value = new Date().toISOString().split('T')[0];
+  // Sync local state with store if search context exists
+  if (store.searchDate) {
+    date.value = store.searchDate;
+  } else {
+    date.value = new Date().toISOString().split('T')[0];
+  }
+
+  if (store.searchPartySize) {
+    partySize.value = store.searchPartySize;
+  }
 });
 </script>
 
