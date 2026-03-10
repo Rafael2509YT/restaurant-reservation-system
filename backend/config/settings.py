@@ -26,7 +26,14 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dwg$i=@&%2^a&@f#5deyb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+# ALLOWED_HOSTS can be a comma-separated list. We also auto-add Render's hostname.
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h.strip()]
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# Essential for Render and other proxies that handle SSL termination
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -55,8 +62,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://localhost:5174').split(',')
-CORS_ALLOW_ALL_ORIGINS = DEBUG # Solo permitir todo en desarrollo
+# CORS configuration
+CORS_ALLOWED_ORIGINS = [o.strip() for o in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',') if o.strip()]
+if not CORS_ALLOWED_ORIGINS and DEBUG:
+    CORS_ALLOWED_ORIGINS = ['http://localhost:5173', 'http://localhost:5174']
+
+CORS_ALLOW_ALL_ORIGINS = DEBUG # Solo permitir todo en desarrollo (si DEBUG=True)
 
 ROOT_URLCONF = 'config.urls'
 
