@@ -26,11 +26,20 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dwg$i=@&%2^a&@f#5deyb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-# ALLOWED_HOSTS can be a comma-separated list. We also auto-add Render's hostname.
+# ALLOWED_HOSTS refinement
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h.strip()]
+
+# Core production domains
+ALLOWED_HOSTS.append('restaurant-backend-7mem.onrender.com')
+
+# Render automatic detection
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# Local development defaults
+if DEBUG:
+    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1', '[::1]'])
 
 # Essential for Render and other proxies that handle SSL termination
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -64,8 +73,13 @@ MIDDLEWARE = [
 
 # CORS configuration
 CORS_ALLOWED_ORIGINS = [o.strip() for o in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',') if o.strip()]
-if not CORS_ALLOWED_ORIGINS and DEBUG:
-    CORS_ALLOWED_ORIGINS = ['http://localhost:5173', 'http://localhost:5174']
+if not CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS = [
+        'https://restaurant-reservation-system-self.vercel.app',
+        'https://restaurant-reservation-system-eta.vercel.app'
+    ]
+    if DEBUG:
+        CORS_ALLOWED_ORIGINS.extend(['http://localhost:5173', 'http://localhost:5174'])
 
 CORS_ALLOW_ALL_ORIGINS = DEBUG # Solo permitir todo en desarrollo (si DEBUG=True)
 
