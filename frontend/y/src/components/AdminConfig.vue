@@ -25,10 +25,7 @@
     </transition>
 
     <!-- CARGANDO SKELETON -->
-    <div v-if="!form" class="skeleton-flow">
-      <div class="s-card"></div>
-      <div class="s-card"></div>
-    </div>
+    <BaseLoading v-if="!form" type="skeleton-form" />
 
     <!-- FORMULARIO -->
     <form @submit.prevent="saveConfig" v-else class="config-inner-grid">
@@ -94,6 +91,7 @@
 import { ref, onMounted } from 'vue';
 import { useReservationStore } from '../stores/reservationStore';
 import { storeToRefs } from 'pinia';
+import BaseLoading from './BaseLoading.vue';
 
 const store = useReservationStore();
 const { loading, error } = storeToRefs(store);

@@ -16,7 +16,8 @@
     </transition>
 
     <div class="tables-scroll-area">
-      <table class="modern-admin-table">
+      <BaseLoading v-if="loading" type="skeleton-table" :count="5" />
+      <table v-else class="modern-admin-table">
         <thead>
           <tr>
             <th>Número</th>
@@ -117,6 +118,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { useReservationStore } from '../stores/reservationStore';
 import { storeToRefs } from 'pinia';
+import BaseLoading from './BaseLoading.vue';
 
 const store = useReservationStore();
 const { tables, loading, error } = storeToRefs(store);

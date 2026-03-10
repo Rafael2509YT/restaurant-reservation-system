@@ -31,7 +31,8 @@
       </div>
 
       <div class="table-wrapper">
-        <table v-if="paginatedReservations.length > 0" class="data-table">
+        <BaseLoading v-if="loading" type="skeleton-table" :count="5" />
+        <table v-else-if="paginatedReservations.length > 0" class="data-table">
           <thead>
             <tr>
               <th @click="toggleSort('time')" class="sortable">
@@ -98,6 +99,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
+import BaseLoading from './BaseLoading.vue';
 
 const props = defineProps({
   reservations: Array,

@@ -45,24 +45,32 @@
     <!-- FORMULARIO -->
     <form v-else @submit.prevent="submitReservation" class="form-body">
       
-      <div class="form-section">
-        <label class="section-title">Información del Cliente</label>
-        <div class="form-group">
-          <label for="name">Nombre completo</label>
-          <div class="input-wrapper">
-            <input type="text" id="name" v-model="form.customer_name" placeholder="Ej. Juan Pérez" required />
+      <div class="form-header-grid">
+        <!-- Columna Izquierda: Identificación -->
+        <div class="info-column">
+          <label class="section-title">Información del Cliente</label>
+          <div class="form-group">
+            <label for="name">Nombre completo</label>
+            <div class="input-wrapper">
+              <input type="text" id="name" v-model="form.customer_name" placeholder="Ej. Juan Pérez" required />
+            </div>
           </div>
-        </div>
 
-        <div class="grid-2">
           <div class="form-group">
             <label for="email">Email <span class="optional">(opcional)</span></label>
             <input type="email" id="email" v-model="form.customer_email" placeholder="juan@ejemplo.com" />
           </div>
+
           <div class="form-group">
             <label for="phone">Teléfono <span class="optional">(opcional)</span></label>
-            <input type="tel" id="phone" v-model="form.customer_phone" placeholder="+00 000 000" />
+            <input type="tel" id="phone" v-model="form.customer_phone" placeholder="62718362" />
           </div>
+        </div>
+
+        <!-- Columna Derecha: El Calendario -->
+        <div class="calendar-column">
+          <label class="section-title">Fecha de Reserva</label>
+          <BaseCalendar v-model="selectedDate" />
         </div>
       </div>
 
@@ -70,34 +78,36 @@
         <label class="section-title">Detalles de la Reserva</label>
         <div class="grid-2">
           <div class="form-group">
-            <label for="date">Fecha</label>
-            <input type="date" id="date" v-model="selectedDate" :min="today" required />
+            <label>Hora de inicio</label>
+            <div class="custom-time-picker">
+              <!-- Selector de Hora -->
+              <div class="stepper">
+                <button type="button" @click="adjustTime('h', -1)" class="step-btn">−</button>
+                <input type="text" v-model="displayHours" @change="validateManualTime" class="time-input" maxlength="2" />
+                <button type="button" @click="adjustTime('h', 1)" class="step-btn">+</button>
+              </div>
+              <span class="time-separator">:</span>
+              <!-- Selector de Minutos -->
+              <div class="stepper">
+                <button type="button" @click="adjustTime('m', -30)" class="step-btn">−</button>
+                <input type="text" v-model="displayMinutes" @change="validateManualTime" class="time-input" maxlength="2" />
+                <button type="button" @click="adjustTime('m', 30)" class="step-btn">+</button>
+              </div>
+            </div>
+            <small class="help-text">Incrementos de 30 minutos.</small>
           </div>
 
           <div class="form-group">
             <label for="guests">Invitados</label>
-            <input type="number" id="guests" v-model="form.guests" required min="1" max="20" />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Hora de inicio</label>
-          <div class="custom-time-picker">
-            <!-- Selector de Hora -->
-            <div class="stepper">
-              <button type="button" @click="adjustTime('h', -1)" class="step-btn">−</button>
-              <input type="text" v-model="displayHours" @change="validateManualTime" class="time-input" maxlength="2" />
-              <button type="button" @click="adjustTime('h', 1)" class="step-btn">+</button>
+            <div class="custom-guest-picker">
+              <div class="stepper">
+                <button type="button" @click="adjustGuests(-1)" class="step-btn">−</button>
+                <div class="stepper-value">{{ form.guests }}</div>
+                <button type="button" @click="adjustGuests(1)" class="step-btn">+</button>
+              </div>
             </div>
-            <span class="time-separator">:</span>
-            <!-- Selector de Minutos -->
-            <div class="stepper">
-              <button type="button" @click="adjustTime('m', -30)" class="step-btn">−</button>
-              <input type="text" v-model="displayMinutes" @change="validateManualTime" class="time-input" maxlength="2" />
-              <button type="button" @click="adjustTime('m', 30)" class="step-btn">+</button>
-            </div>
+            <small class="help-text">Máximo 20 personas.</small>
           </div>
-          <small class="help-text">Incrementos de 30 minutos dentro del horario comercial.</small>
         </div>
       </div>
 
@@ -107,7 +117,7 @@
       </div>
 
       <button type="submit" class="btn-primary" :disabled="store.loading">
-        <span v-if="!store.loading">Confirmar Reservación</span>
+        <span v-if="!loading">Confirmar Reservación</span>
         <span v-else class="loader"></span>
       </button>
     </form>
@@ -117,16 +127,19 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useReservationStore } from '../stores/reservationStore';
+import { storeToRefs } from 'pinia';
+import BaseCalendar from './BaseCalendar.vue';
 
 const props = defineProps({
   tableId: {
-    type: Number,
+    type: [Number, String],
     required: true
   }
 });
 
 const emit = defineEmits(['reset', 'success']);
 const store = useReservationStore();
+const { loading } = storeToRefs(store);
 
 // Variables de estado (Mantenidas)
 const success = ref(false);
@@ -152,34 +165,73 @@ watch([displayHours, displayMinutes], () => {
   selectedTime.value = `${displayHours.value.padStart(2, '0')}:${displayMinutes.value.padStart(2, '0')}`;
 });
 
+
+// algoritmo que ajusta la hora y los minutos al horario de apertura y cierre del restaurante
 const adjustTime = (type, delta) => {
+  const config = store.config;
+  let h = parseInt(displayHours.value);
+  let m = parseInt(displayMinutes.value);
+
   if (type === 'h') {
-    let h = parseInt(displayHours.value) + delta;
+    h += delta;
     if (h > 23) h = 0;
     if (h < 0) h = 23;
-    displayHours.value = h.toString().padStart(2, '0');
   } else {
-    let m = parseInt(displayMinutes.value) + delta;
+    m += delta;
     if (m >= 60) {
       m = 0;
-      adjustTime('h', 1);
+      h = (h + 1) > 23 ? 0 : h + 1;
     } else if (m < 0) {
       m = 30;
-      adjustTime('h', -1);
+      h = (h - 1) < 0 ? 23 : h - 1;
     }
-    displayMinutes.value = m.toString().padStart(2, '0');
   }
+
+  // Enforce business hours if config exists
+  if (config) {
+    const openH = parseInt(config.opening_time.split(':')[0]);
+    const closeH = parseInt(config.closing_time.split(':')[0]);
+    
+    // Simple check: snap to bounds
+    if (h < openH) {
+      h = openH;
+      m = parseInt(config.opening_time.split(':')[1]);
+    } else if (h > closeH || (h === closeH && m > parseInt(config.closing_time.split(':')[1]))) {
+      h = closeH;
+      m = parseInt(config.closing_time.split(':')[1]);
+    }
+  }
+
+  displayHours.value = h.toString().padStart(2, '0');
+  displayMinutes.value = m.toString().padStart(2, '0');
 };
 
 const validateManualTime = () => {
   let h = parseInt(displayHours.value) || 0;
   let m = parseInt(displayMinutes.value) || 0;
+  const config = store.config;
   
   if (h > 23) h = 23;
   if (m > 59) m = 30;
+  m = m < 30 ? 0 : 30;
+
+  if (config) {
+    const openH = parseInt(config.opening_time.split(':')[0]);
+    const closeH = parseInt(config.closing_time.split(':')[0]);
+    
+    if (h < openH) h = openH;
+    if (h > closeH) h = closeH;
+  }
   
   displayHours.value = h.toString().padStart(2, '0');
-  displayMinutes.value = (m < 30 ? 0 : 30).toString().padStart(2, '0');
+  displayMinutes.value = m.toString().padStart(2, '0');
+};
+
+const adjustGuests = (delta) => {
+  const newVal = form.value.guests + delta;
+  if (newVal >= 1 && newVal <= 20) {
+    form.value.guests = newVal;
+  }
 };
 
 const today = computed(() => {
@@ -211,8 +263,16 @@ const submitReservation = async () => {
     }
 };
 
-onMounted(() => {
+onMounted(async () => {
     selectedDate.value = today.value;
+    await store.fetchConfig();
+    
+    // Set initial time to opening time if available
+    if (store.config) {
+      const [h, m] = store.config.opening_time.split(':');
+      displayHours.value = h;
+      displayMinutes.value = m;
+    }
 });
 </script>
 
@@ -474,8 +534,48 @@ input:focus {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
 
-@media (max-width: 480px) {
-  .grid-2 { grid-template-columns: 1fr; }
+.form-header-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.calendar-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mt-3 { margin-top: 1rem; }
+
+.guest-input {
+  width: 100%;
+}
+
+.stepper-value {
+  width: 50px;
+  text-align: center;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1.1rem;
+}
+
+.custom-guest-picker .stepper {
+  width: fit-content;
+}
+
+@media (max-width: 600px) {
+  .form-header-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
   .reservation-card { margin: 1rem; }
 }
 </style>
