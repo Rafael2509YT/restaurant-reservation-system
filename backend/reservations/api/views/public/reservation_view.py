@@ -5,14 +5,20 @@ from reservations.services.reservation_service import ReservationService
 from reservations.serializers.reservation_serializer import ReservationSerializer
 from rest_framework.exceptions import ValidationError
 
+# [API] Uso de APIView de Django Rest Framework para construir endpoints RESTful.
 class ReservationView(APIView):
     def post(self, request):
         try:
+            # [SERVICE LAYER] La vista solo orquesta; la lógica pesada reside en el servicio.
             reservation = ReservationService.create_reservation(request.data)
             serializer = ReservationSerializer(reservation)
+            
+            # [MANEJO DE ERRORES] Uso de códigos de estado HTTP semánticos (201 Created).
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as e:
+            # [MANEJO DE ERRORES] Captura de errores de validación con código 400 Bad Request.
             return Response({"error": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+
         except Exception as e:
             import logging
             logger = logging.getLogger(__name__)

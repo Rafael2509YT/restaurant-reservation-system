@@ -59,6 +59,18 @@ INSTALLED_APPS = [
     'reservations',
 ]
 
+# Configuración de Django Rest Framework y JWT
+# Se usa para estandarizar las respuestas API y manejar la autenticación segura.
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny', # Cambiar a IsAuthenticated para rutas protegidas
+    ),
+}
+
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -103,8 +115,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
-# Use DATABASE_URL from environment for PostgreSQL, fallback to sqlite3 for local
+# [BASE DE DATOS] Configuración dinámica para PostgreSQL en producción y SQLite en local.
 DATABASES = {
     'default': dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",

@@ -9,7 +9,10 @@ class Reservation(models.Model):
         ('cancelled', 'Cancelled')
     ]
     
+    # [MODELOS] Uso de UUID para códigos de cancelación únicos y seguros.
     unique_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    
+    # [MODELOS] Relación ForeignKey con Table, usando PROTECT para integridad referencial.
     table = models.ForeignKey(Table, on_delete=models.PROTECT, related_name='reservations')
     
     name = models.CharField(max_length=255)
@@ -20,8 +23,12 @@ class Reservation(models.Model):
     time = models.TimeField()
     guests = models.IntegerField()
     
+    # [MODELOS] Uso de choices para manejar estados finitos de la reserva.
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='confirmed')
+    
+    # [MODELOS] Timestamps automáticos para trazabilidad de creación.
     created_at = models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
         return f"Reservation {self.unique_code} for {self.name} on {self.date} at {self.time}"

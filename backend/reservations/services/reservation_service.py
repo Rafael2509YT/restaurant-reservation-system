@@ -66,14 +66,16 @@ class ReservationService:
             raise ValidationError("Reservation is outside operating hours.")
 
         
-        # --- MANEJO DE CONCURRENCIA Y PREVENCIÓN DE DOBLE RESERVA ---
-        # Se utiliza un bloque 'transaction.atomic' para asegurar que todas las operaciones 
-        # se realicen como una sola unidad. Si algo falla, no se guarda nada en la BD.
+        # [CONCURRENCIA] Uso de transaction.atomic para asegurar que el proceso de reserva 
+        # sea una operación de "todo o nada", protegiendo la integridad de los datos.
         with transaction.atomic():
             # 1. Intentar validar la mesa solicitada originalmente
             table = None
             try:
+                # [CONCURRENCIA] select_for_update() bloquea la fila en la BD para evitar 
+                # que dos personas reserven la misma mesa al mismo milisegundo.
                 requested_table = Table.objects.select_for_update().get(id=table_id, is_active=True)
+
                 # Verificar si la mesa solicitada cumple con la capacidad y disponibilidad
                 if requested_table.capacity >= guests:
                     # Verificar solapamiento para esta mesa específica

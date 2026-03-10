@@ -126,6 +126,10 @@
 </template>
 
 <script setup>
+/**
+ * [VUE CORE] Uso de Vue 3 con Composition API (<script setup>).
+ * Permite una organización del código más limpia y modular.
+ */
 import { ref, computed, onMounted } from 'vue';
 import { useReservationStore } from '../stores/reservationStore';
 import { storeToRefs } from 'pinia';
@@ -133,11 +137,20 @@ import BaseLoading from './BaseLoading.vue';
 import BaseCalendar from './BaseCalendar.vue';
 
 const store = useReservationStore();
+
+/**
+ * [ESTADO] Uso de storeToRefs para mantener la reactividad de los datos 
+ * extraídos del store de Pinia.
+ */
 const { availability, loading, noCapacity, noDate } = storeToRefs(store);
 
+/**
+ * [VUE CORE] Uso de 'ref' para crear variables reactivas locales.
+ */
 const date = ref('');
 const partySize = ref(2);
 const hasChecked = ref(false);
+
 
 const adjustPartySize = (delta) => {
   const newVal = partySize.value + delta;
