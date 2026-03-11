@@ -23,8 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dwg$i=@&%2^a&@f#5deybd=jv!8mg#$(!&xslze+w=k$p5w$-b')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+# [DESPLIEGUE] Desactivamos el modo depuración para garantizar la seguridad en producción.
+DEBUG = False
 
 # ALLOWED_HOSTS refinement
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h.strip()]
