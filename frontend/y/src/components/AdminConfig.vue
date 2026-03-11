@@ -112,7 +112,6 @@ const saveConfig = async () => {
         successMsg.value = "Configuración actualizada";
         setTimeout(() => successMsg.value = '', 4000);
     } catch (e) {
-        console.error("Config error");
     }
 };
 </script>
@@ -121,24 +120,27 @@ const saveConfig = async () => {
 .config-section-container {
   width: 100%;
   background: white;
-  border-radius: 1.25rem;
+  border-radius: 1rem;
   border: 1px solid #e2e8f0;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
 }
 
 /* Header Compacto */
 .section-top-bar {
-  padding: 1.5rem 1.75rem;
+  padding: 1.25rem 1.5rem;
   background: #f8fafc;
   border-bottom: 1px solid #e2e8f0;
   display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
   justify-content: space-between;
   align-items: center;
 }
 
-.section-title { font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0; }
-.section-subtitle { font-size: 0.8rem; color: #64748b; margin: 0; }
+.section-title { font-size: 0.95rem; font-weight: 800; color: #0f172a; margin: 0; }
+.section-subtitle { font-size: 0.75rem; color: #64748b; margin: 0; }
 
 .toast-success {
   background: #10b981;
@@ -150,15 +152,14 @@ const saveConfig = async () => {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
 }
 
 /* Grid Interno */
 .config-inner-grid {
-  padding: 1.75rem;
+  padding: 1.5rem;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
 }
 
 .setting-card {
@@ -166,6 +167,8 @@ const saveConfig = async () => {
   padding: 1.25rem;
   border-radius: 12px;
   border: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-header-icon {
@@ -180,8 +183,20 @@ const saveConfig = async () => {
 .card-header-icon.amber { color: #f59e0b; }
 
 /* Inputs Estilizados */
-.form-grid-row { display: flex; gap: 1rem; }
-.input-block { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
+.form-grid-row { 
+  display: flex; 
+  gap: 1rem; 
+  flex-wrap: wrap;
+}
+
+.input-block { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.4rem; 
+  flex: 1;
+  min-width: 140px;
+}
+
 .input-block label { font-size: 0.75rem; font-weight: 700; color: #475569; }
 
 .premium-input, .input-group-addon input {
@@ -218,10 +233,9 @@ const saveConfig = async () => {
 
 /* Footer y Botón */
 .config-footer {
-  grid-column: span 2;
   display: flex;
   justify-content: flex-end;
-  padding-top: 0.5rem;
+  padding: 0 1.5rem 1.5rem;
 }
 
 .btn-save-settings {
@@ -234,11 +248,23 @@ const saveConfig = async () => {
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s;
+  width: auto;
 }
 
-.btn-save-settings:hover {
-  background: #1e293b;
-  transform: translateY(-1px);
+@media (max-width: 640px) {
+  .config-inner-grid {
+    padding: 1rem;
+    grid-template-columns: 1fr;
+  }
+  .section-top-bar {
+    padding: 1rem;
+  }
+  .config-footer {
+    padding: 0 1rem 1rem;
+  }
+  .btn-save-settings {
+    width: 100%;
+  }
 }
 
 .flex-center { display: flex; align-items: center; }
@@ -246,7 +272,7 @@ const saveConfig = async () => {
 
 /* Otros */
 .error-strip {
-  margin: 1rem 1.75rem 0;
+  margin: 1rem 1.5rem 0;
   padding: 0.75rem;
   background: #fef2f2;
   border: 1px solid #fecaca;
@@ -263,9 +289,4 @@ const saveConfig = async () => {
 /* Animaciones */
 .fade-slide-enter-active { transition: all 0.3s ease-out; }
 .fade-slide-enter-from { opacity: 0; transform: translateX(10px); }
-
-@media (max-width: 1024px) {
-  .config-inner-grid { grid-template-columns: 1fr; }
-  .config-footer { grid-column: span 1; }
-}
 </style>

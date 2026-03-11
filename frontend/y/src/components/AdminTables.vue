@@ -188,7 +188,7 @@ const deleteTable = async (id) => {
 }
 
 .section-header {
-  padding: 1.5rem;
+  padding: 1.25rem;
   background: #f8fafc;
   border-bottom: 1px solid #e2e8f0;
 }
@@ -229,7 +229,7 @@ const deleteTable = async (id) => {
 }
 
 .modern-admin-table td {
-  padding: 1rem;
+  padding: 0.85rem 1rem;
   border-bottom: 1px solid #f1f5f9;
   color: #334155;
 }
@@ -329,7 +329,7 @@ const deleteTable = async (id) => {
 
 /* Sección Agregar Mesa */
 .add-table-section {
-  padding: 2rem;
+  padding: 1.5rem;
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
 }
@@ -444,8 +444,9 @@ input:checked + .slider:before { transform: translateX(18px); }
 .scale-enter-from, .scale-leave-to { transform: scale(0.5); opacity: 0; }
 
 @media (max-width: 768px) {
-  .modern-inline-form { flex-direction: column; align-items: stretch; }
-  .btn-icon-text { width: 100%; justify-content: center; }
-  .actions-group { flex-direction: column; }
+  .modern-inline-form { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .btn-icon-text { width: 100%; justify-content: center; min-width: auto; }
+  .actions-group { flex-direction: column; width: 100%; }
+  .table-number-cell { font-size: 0.85rem; }
 }
 </style>

@@ -39,7 +39,14 @@ import AdminDashboard from '../components/AdminDashboard.vue';
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid #e2e8f0;
-  padding: 0.75rem 2rem;
+  padding: 0.75rem 1rem;
+}
+
+@media (max-width: 1024px) {
+  .admin-sticky-nav {
+    top: 60px; /* Ajuste para el navbar en móviles si cambia de altura */
+    padding: 0.5rem 1rem;
+  }
 }
 
 .nav-inner {
@@ -86,8 +93,7 @@ import AdminDashboard from '../components/AdminDashboard.vue';
   color: #6366f1;
 }
 
-.admin-content-flow {
-  padding: 2rem 0;
+  padding: 1.5rem 1rem;
 }
 
 @media (max-width: 768px) {

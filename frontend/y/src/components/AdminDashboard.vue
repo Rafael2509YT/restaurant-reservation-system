@@ -67,18 +67,18 @@ onMounted(() => fetchData());
 .dashboard-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 2rem 4rem;
+  padding: 0 1rem 3rem;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 1.5rem;
 }
 .dashboard-header { margin-top: 1rem; }
 .page-title { font-size: 2rem; font-weight: 800; color: #0f172a; margin: 0; }
 .page-subtitle { color: #64748b; font-size: 1rem; }
 .admin-grid-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
   align-items: start;
 }
 .scroll-mt { scroll-margin-top: 100px; }

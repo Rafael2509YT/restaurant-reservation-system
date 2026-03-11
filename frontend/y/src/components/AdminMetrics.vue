@@ -58,7 +58,7 @@ const getOccupancyColor = (val, type) => {
 }
 .metric-card {
   background: white;
-  padding: 1.5rem;
+  padding: 1.25rem 1.1rem;
   border-radius: 1.25rem;
   border: 1px solid #e2e8f0;
   display: flex;

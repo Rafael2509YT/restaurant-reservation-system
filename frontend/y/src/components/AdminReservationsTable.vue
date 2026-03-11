@@ -153,12 +153,14 @@ watch(searchQuery, () => currentPage.value = 1);
 
 <style scoped>
 /* Reutilizamos los estilos de la tabla anterior */
+.table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.data-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
 .section-card { background: white; border-radius: 1.5rem; border: 1px solid #e2e8f0; overflow: hidden; }
-.card-toolbar { padding: 1.5rem 2rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
-.toolbar-left { display: flex; align-items: center; gap: 1.5rem; flex: 1; min-width: 300px; }
+.card-toolbar { padding: 1.25rem 1.5rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem; }
+.toolbar-left { display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 250px; }
 .search-box { position: relative; max-width: 350px; width: 100%; }
 .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
-.search-input { width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border-radius: 0.75rem; border: 1px solid #cbd5e1; font-size: 0.9rem; }
+.search-input { width: 100%; padding: 0.5rem 1rem 0.5rem 2.5rem; border-radius: 0.75rem; border: 1px solid #cbd5e1; font-size: 0.85rem; }
 .filters-bar { display: flex; align-items: center; gap: 1rem; }
 .filter-item { display: flex; flex-direction: column; gap: 0.25rem; }
 .filter-item label { font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
@@ -168,14 +170,24 @@ watch(searchQuery, () => currentPage.value = 1);
 .sort-indicator { display: inline-block; width: 8px; height: 8px; margin-left: 5px; opacity: 0.3; border: 4px solid transparent; position: relative; }
 .sort-indicator.asc { border-bottom-color: #6366f1; opacity: 1; top: -4px; }
 .sort-indicator.desc { border-top-color: #6366f1; opacity: 1; top: 4px; }
-.data-table td { padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+.data-table td { padding: 1rem 1.25rem; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
 .status-pill { padding: 0.3rem 0.7rem; border-radius: 2rem; font-size: 0.75rem; font-weight: 700; text-transform: capitalize; }
 .status-pill.confirmed { background: #dcfce7; color: #166534; }
 .status-pill.pending { background: #fef3c7; color: #92400e; }
 .status-pill.cancelled { background: #fee2e2; color: #991b1b; }
 .btn-action-delete { padding: 0.4rem 0.8rem; background: #fff1f2; border: 1px solid #fecaca; color: #dc2626; border-radius: 8px; font-weight: 600; cursor: pointer; }
-.table-footer { padding: 1.25rem 2rem; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0; }
+.table-footer { padding: 1.25rem 1.5rem; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0; flex-wrap: wrap; gap: 1rem; }
 .pagination-pages { display: flex; align-items: center; gap: 1rem; }
 .btn-nav { width: 32px; height: 32px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; cursor: pointer; }
 .table-empty-state { padding: 3rem; text-align: center; color: #94a3b8; }
+
+@media (max-width: 768px) {
+  .card-toolbar { padding: 1rem; flex-direction: column; align-items: stretch; }
+  .toolbar-left { min-width: auto; flex-direction: column; align-items: stretch; }
+  .filters-bar { flex-wrap: wrap; justify-content: space-between; }
+  .filter-item { flex: 1; min-width: 120px; }
+  .search-box { max-width: 100%; }
+  .table-footer { flex-direction: column; gap: 1.25rem; padding: 1.5rem 1rem; }
+  .footer-controls { width: 100%; justify-content: space-between; }
+}
 </style>
