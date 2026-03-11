@@ -23,23 +23,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dwg$i=@&%2^a&@f#5deybd=jv!8mg#$(!&xslze+w=k$p5w$-b')
 
-# [DESPLIEGUE] Desactivamos el modo depuración para garantizar la seguridad en producción.
-DEBUG = False
+# [AUDITORÍA - DESPLIEGUE] Versatilidad Local/Producción
+# En producción, RENDER enviará DEBUG=False. En local, si no se define, será False por seguridad.
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# ALLOWED_HOSTS refinement
-ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h.strip()]
+# [AUDITORÍA] ALLOWED_HOSTS simplificado y versátil.
+# Siempre permitimos localhost para desarrollo fácil.
+ALLOWED_HOSTS = [
+    'localhost', '127.0.0.1', '[::1]',
+    'restaurant-backend-7mem.onrender.com'
+]
 
-# Core production domains
-ALLOWED_HOSTS.append('restaurant-backend-7mem.onrender.com')
-
-# Render automatic detection
+# Añadimos hosts dinámicos de Render o de variables de entorno
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-# Local development defaults
-if DEBUG:
-    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1', '[::1]'])
+ENV_ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS')
+if ENV_ALLOWED_HOSTS:
+    ALLOWED_HOSTS.extend([h.strip() for h in ENV_ALLOWED_HOSTS.split(',')])
 
 # Essential for Render and other proxies that handle SSL termination
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -83,17 +85,34 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS configuration
-CORS_ALLOWED_ORIGINS = [o.strip() for o in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',') if o.strip()]
-if not CORS_ALLOWED_ORIGINS:
-    CORS_ALLOWED_ORIGINS = [
-        'https://restaurant-reservation-system-self.vercel.app',
-        'https://restaurant-reservation-system-eta.vercel.app'
-    ]
-    if DEBUG:
-        CORS_ALLOWED_ORIGINS.extend(['http://localhost:5173', 'http://localhost:5174'])
+# [AUDITORÍA] Configuración de CORS versátil.
+# Siempre incluimos el origen local para facilitar el desarrollo sin cambios manuales.
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://127.0.0.1:5173',
+    'https://restaurant-reservation-system-self.vercel.app',
+    'https://restaurant-reservation-system-eta.vercel.app',
+]
 
-CORS_ALLOW_ALL_ORIGINS = DEBUG # Solo permitir todo en desarrollo (si DEBUG=True)
+# Permitimos añadir orígenes adicionales vía variables de entorno (útil en producción)
+EXTRA_CORS_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS')
+if EXTRA_CORS_ORIGINS:
+    CORS_ALLOWED_ORIGINS.extend([o.strip() for o in EXTRA_CORS_ORIGINS.split(',')])
+
+# [SEGURIDAD] Solo permitimos "todos los orígenes" si DEBUG está activado manualmente.
+CORS_ALLOW_ALL_ORIGINS = DEBUG
+
+# [AUDITORÍA - SEGURIDAD] CSRF_TRUSTED_ORIGINS es obligatorio cuando DEBUG=False.
+# Sin esto, Django bloqueará las peticiones POST/DELETE desde el frontend local.
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://127.0.0.1:5173',
+    'https://restaurant-reservation-system-self.vercel.app',
+    'https://restaurant-reservation-system-eta.vercel.app',
+    'https://restaurant-backend-7mem.onrender.com'
+]
 
 ROOT_URLCONF = 'config.urls'
 
