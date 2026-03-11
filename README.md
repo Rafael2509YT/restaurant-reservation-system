@@ -60,3 +60,16 @@ Sistema de gestión de reservaciones para restaurantes, desarrollado con **Djang
 ## 🔗 URLs de Producción
 *   **Frontend**: [https://restaurant-reservation-system-self.vercel.app](https://restaurant-reservation-system-self.vercel.app)
 *   **Backend API**: [https://restaurant-backend-7mem.onrender.com](https://restaurant-backend-7mem.onrender.com)
+
+---
+
+## 🛠️ Herramientas de Utilidad
+
+### Vaciar Base de Datos (Mesas y Reservas)
+He incluido un comando personalizado para limpiar las tablas y reiniciar los contadores de ID de forma segura:
+
+```powershell
+# Desde la carpeta /backend
+python manage.py clear_data
+```
+*Este comando pedirá confirmación antes de proceder. También puedes usar `--no-confirm` para ejecución directa en scripts.*

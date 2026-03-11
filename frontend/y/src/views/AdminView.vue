@@ -34,7 +34,7 @@ import AdminDashboard from '../components/AdminDashboard.vue';
 
 .admin-sticky-nav {
   position: sticky;
-  top: 72px; /* Debajo del navbar principal de App.vue */
+  top: 72px; 
   z-index: 50;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(8px);
@@ -44,7 +44,7 @@ import AdminDashboard from '../components/AdminDashboard.vue';
 
 @media (max-width: 1024px) {
   .admin-sticky-nav {
-    top: 60px; /* Ajuste para el navbar en móviles si cambia de altura */
+    top: 60px;
     padding: 0.5rem 1rem;
   }
 }
@@ -92,6 +92,7 @@ import AdminDashboard from '../components/AdminDashboard.vue';
 .nav-anchors a:hover {
   color: #6366f1;
 }
+
 .admin-content-flow {
   padding: 1.5rem 1rem;
 }
