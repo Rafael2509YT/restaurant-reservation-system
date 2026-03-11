@@ -350,7 +350,30 @@ onMounted(() => {
 .info-top h4 { margin: 0; font-weight: 800; }
 .capacity-tag { font-size: 0.7rem; font-weight: 800; background: #f1f5f9; padding: 0.3rem 0.6rem; border-radius: 2rem; }
 
-.time-pill { background: #eef2ff; color: #4338ca; padding: 0.4rem 0.8rem; border-radius: 0.75rem; font-size: 0.8rem; font-weight: 700; }
+.times-pill-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  max-height: 80px; /* Evita que crezca demasiado si hay muchísimos horarios */
+  overflow-y: auto; /* Permite scroll interno si rebasa el límite */
+  padding-right: 4px;
+}
+
+.time-pill { 
+  background: #eef2ff; 
+  color: #4338ca; 
+  padding: 0.4rem 0.7rem; 
+  border-radius: 0.7rem; 
+  font-size: 0.75rem; 
+  font-weight: 700; 
+  white-space: nowrap;
+}
+
+/* Scrollbar sutil para el contenedor de horas */
+.times-pill-container::-webkit-scrollbar { width: 4px; }
+.times-pill-container::-webkit-scrollbar-track { background: transparent; }
+.times-pill-container::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
 
 .btn-reserve {
   width: 100%; padding: 0.8rem; margin-top: 1rem; border-radius: 1rem; border: none;
