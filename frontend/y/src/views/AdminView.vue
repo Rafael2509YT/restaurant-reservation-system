@@ -92,7 +92,7 @@ import AdminDashboard from '../components/AdminDashboard.vue';
 .nav-anchors a:hover {
   color: #6366f1;
 }
-
+.admin-content-flow {
   padding: 1.5rem 1rem;
 }
 
