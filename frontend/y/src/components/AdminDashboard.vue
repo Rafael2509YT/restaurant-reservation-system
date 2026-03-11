@@ -10,6 +10,14 @@
     <!-- NUEVO COMPONENTE DE MÉTRICAS -->
     <AdminMetrics :metrics="metrics" />
 
+    <!-- NUEVO COMPONENTE DE TABLA DE RESERVAS -->
+    <AdminReservationsTable 
+      :reservations="adminReservations" 
+      :loading="loading"
+      @filter-change="handleExternalFilter"
+      @cancel-res="handleCancelReservation"
+    />
+
     <div class="admin-grid-layout">
       <section id="config" class="scroll-mt">
         <AdminConfig />
@@ -18,14 +26,6 @@
         <AdminTables />
       </section>
     </div>
-
-    <!-- NUEVO COMPONENTE DE TABLA DE RESERVAS -->
-    <AdminReservationsTable 
-      :reservations="adminReservations" 
-      :loading="loading"
-      @filter-change="handleExternalFilter"
-      @cancel-res="handleCancelReservation"
-    />
   </div>
 </template>
 
